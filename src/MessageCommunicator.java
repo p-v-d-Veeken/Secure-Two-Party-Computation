@@ -30,7 +30,7 @@ class MessageCommunicator
 	{
 		try
 		{
-			byte[] encryptedMsg = formatMessage(recipient.getBytes(), encryptor.encrypt(message));
+			byte[] encryptedMsg = formatMessage(encryptor.encrypt(message, recipient.getBytes()));
 
 			out.write(encryptedMsg);
 			out.flush();
@@ -54,17 +54,12 @@ class MessageCommunicator
 		       ? message
 		       : null;
 	}
-	private byte[] formatMessage(byte[] recipient, byte[] message)
+	private byte[] formatMessage(byte[] message)
 	{
 		ByteBuffer bbLen = ByteBuffer.allocate(4);
-		ByteBuffer bbRcp = ByteBuffer.allocate(8);
-		bbRcp.put(recipient);
 		bbLen.order(ByteOrder.BIG_ENDIAN);
 		bbLen.putInt(message.length + 8);
 
-		return ArrayUtils.addAll( //length|recipient|message
-			bbLen.array(),
-			ArrayUtils.addAll(bbRcp.array(), message)
-		);
+		return ArrayUtils.addAll( bbLen.array(), message );
 	}
 }

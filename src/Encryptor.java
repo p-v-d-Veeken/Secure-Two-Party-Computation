@@ -48,25 +48,25 @@ class Encryptor
 	{
 		try
 		{
-			int    i      = Arrays.asList(Config.nodes).indexOf(toNode);
 			byte[] AESKey = AESKeys.get(toNode);
 			byte[] IV     = Config.AESIV.getBytes();
-			byte[] encryptedKey, encryptedIV, encryptedMsg, encrypted;
+			byte[] encryptedKey, encryptedMsg, encrypted;
 
-			encryptedKey = RSACiphers.get(toNode).doFinal(AESKey);
-			encryptedIV = RSACiphers.get(toNode).doFinal(IV);
+			encryptedKey = RSACiphers.get(toNode).doFinal(ArrayUtils.addAll(AESKey, IV));
 			encryptedMsg = AESCiphers.get(toNode).doFinal(message);
-			encrypted = ArrayUtils.addAll(encryptedKey, encryptedIV);
-			encrypted = ArrayUtils.addAll(encrypted, encryptedMsg);
+			encrypted = ArrayUtils.addAll(encryptedKey, encryptedMsg);
 
-			return i == 0
-			       ? encrypted
-			       : encrypt(encrypted, Config.nodes[i - 1]);
+			return encrypted;
 		}
 		catch(IllegalBlockSizeException | BadPaddingException e) { e.printStackTrace(); }
 		return new byte[]{};
 	}
-	byte[] encrypt(String message){ return encrypt(message.getBytes(), Config.nodes[Config.nodes.length - 1]); }
+	byte[] encrypt(String message, byte[] recipient){
+		byte[] messageCache =  encrypt(ArrayUtils.addAll( recipient, message.getBytes() ), "Cache");
+		byte[] messageC = encrypt(messageCache, "C");
+		byte[] messageB = encrypt(messageC, "B");
+		return encrypt(messageB, "A");
+	}
 	private byte[] getKey(String nodeName)
 	{
 		String key = "";
