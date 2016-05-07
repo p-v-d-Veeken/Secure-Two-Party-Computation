@@ -64,10 +64,7 @@ class Encryptor
 			       ? encrypted
 			       : encrypt(encrypted, Config.nodes[i - 1]);
 		}
-		catch(IllegalBlockSizeException | BadPaddingException e)
-		{
-			e.printStackTrace();
-		}
+		catch(IllegalBlockSizeException | BadPaddingException e) { e.printStackTrace(); }
 		return new byte[]{};
 	}
 	byte[] encrypt(String message){ return encrypt(message.getBytes(), Config.nodes[Config.nodes.length - 1]); }
@@ -106,10 +103,7 @@ class Encryptor
 					entry -> keyGen.generateKey().getEncoded()
 				));
 		}
-		catch(NoSuchAlgorithmException e)
-		{
-			e.printStackTrace();
-		}
+		catch(NoSuchAlgorithmException e) {	e.printStackTrace(); }
 		return AESKeys;
 	}
 	private Cipher createRSACipher(byte[] key)

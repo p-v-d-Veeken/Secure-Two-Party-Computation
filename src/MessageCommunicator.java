@@ -22,23 +22,17 @@ class MessageCommunicator
 			out = new DataOutputStream(socket.getOutputStream());
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		}
-		catch(IOException e)
-		{
-			e.printStackTrace();
-		}
+		catch(IOException e)	{ e.printStackTrace(); }
 	}
-	void sendMessage(String message)
+	void sendMessage(String recipient, String message)
 	{
 		try
 		{
-			byte[] encryptedMsg = formatMessage(encryptor.encrypt(message));
+			byte[] encryptedMsg = formatMessage(recipient.getBytes(), encryptor.encrypt(message));
 
 			out.write(encryptedMsg);
 		}
-		catch(IOException e)
-		{
-			e.printStackTrace();
-		}
+		catch(IOException e) { e.printStackTrace(); }
 	}
 	String receiveMessage()
 	{
@@ -52,20 +46,22 @@ class MessageCommunicator
 				message += line;
 			}
 		}
-		catch(IOException e)
-		{
-			e.printStackTrace();
-		}
+		catch(IOException e) { e.printStackTrace(); }
 		return !message.equals("")
 		       ? message
 		       : null;
 	}
-	private byte[] formatMessage(byte[] message)
+	private byte[] formatMessage(byte[] recipient, byte[] message)
 	{
-		ByteBuffer bb = ByteBuffer.allocate(4);
-		bb.order(ByteOrder.BIG_ENDIAN);
-		bb.putInt(message.length);
+		ByteBuffer bbLen = ByteBuffer.allocate(4);
+		ByteBuffer bbRcp = ByteBuffer.allocate(8);
+		bbRcp.put(recipient);
+		bbLen.order(ByteOrder.BIG_ENDIAN);
+		bbLen.putInt(message.length + 8);
 
-		return ArrayUtils.addAll(bb.array(), message);
+		return ArrayUtils.addAll( //length|recipient|message
+			bbLen.array(),
+			ArrayUtils.addAll(bbRcp.array(), message)
+		);
 	}
 }
