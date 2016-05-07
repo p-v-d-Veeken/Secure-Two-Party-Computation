@@ -1,6 +1,8 @@
-import org.apache.commons.lang.ArrayUtils;
-
-import java.io.*;
+import org.apache.commons.lang3.ArrayUtils;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -31,6 +33,7 @@ class MessageCommunicator
 			byte[] encryptedMsg = formatMessage(recipient.getBytes(), encryptor.encrypt(message));
 
 			out.write(encryptedMsg);
+			out.flush();
 		}
 		catch(IOException e) { e.printStackTrace(); }
 	}

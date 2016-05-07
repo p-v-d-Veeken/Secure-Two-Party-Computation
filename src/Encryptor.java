@@ -1,19 +1,18 @@
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
-import org.apache.commons.lang.ArrayUtils;
-
+import org.apache.commons.lang3.ArrayUtils;
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.File;
 import java.io.IOException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.KeyFactory;
-import java.security.NoSuchAlgorithmException;
+import java.security.*;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 
 class Encryptor
@@ -94,7 +93,7 @@ class Encryptor
 
 		try
 		{
-			KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+			KeyGenerator keyGen = KeyGenerator.getInstance("AES", "BC");
 			keyGen.init(128);
 			AESKeys = RSAKeys.keySet()
 				.stream()
@@ -103,23 +102,23 @@ class Encryptor
 					entry -> keyGen.generateKey().getEncoded()
 				));
 		}
-		catch(NoSuchAlgorithmException e) {	e.printStackTrace(); }
+		catch(NoSuchAlgorithmException | NoSuchProviderException e) {	e.printStackTrace(); }
 		return AESKeys;
 	}
 	private Cipher createRSACipher(byte[] key)
 	{
 		try
 		{
-			KeyFactory         keyFactory = KeyFactory.getInstance("RSA");
+			KeyFactory         keyFactory = KeyFactory.getInstance("RSA", "BC");
 			X509EncodedKeySpec KeySpec    = new X509EncodedKeySpec(key);
 			RSAPublicKey       pubKey     = (RSAPublicKey) keyFactory.generatePublic(KeySpec);
 
-			Cipher cipher = Cipher.getInstance(Config.RSAMode);
+			Cipher cipher = Cipher.getInstance(Config.RSAMode, "BC");
 			cipher.init(Cipher.ENCRYPT_MODE, pubKey);
 
 			return cipher;
 		}
-		catch(NoSuchAlgorithmException | InvalidKeyException | NoSuchPaddingException | InvalidKeySpecException e)
+		catch(NoSuchAlgorithmException | InvalidKeyException | NoSuchPaddingException | InvalidKeySpecException | NoSuchProviderException e)
 		{
 			e.printStackTrace();
 		}
@@ -129,15 +128,14 @@ class Encryptor
 	{
 		try
 		{
-			Cipher        cipher = Cipher.getInstance(Config.AESMode);
+			Cipher        cipher = Cipher.getInstance(Config.AESMode, "BC");
 			SecretKeySpec spec   = new SecretKeySpec(key, "AES");
 
 			cipher.init(Cipher.ENCRYPT_MODE, spec, new IvParameterSpec(Config.AESIV.getBytes()));
 
 			return cipher;
 		}
-		catch(NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException |
-			InvalidAlgorithmParameterException e)
+		catch(NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | InvalidAlgorithmParameterException | NoSuchProviderException e)
 		{
 			e.printStackTrace();
 		}
