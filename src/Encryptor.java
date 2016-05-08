@@ -1,5 +1,7 @@
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 import org.apache.commons.lang3.ArrayUtils;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
@@ -24,6 +26,8 @@ class Encryptor
 
 	Encryptor()
 	{
+		Security.addProvider(new BouncyCastleProvider());
+
 		RSAKeys = Arrays
 			.stream(Config.nodes)
 			.collect(Collectors.toMap(
@@ -61,10 +65,11 @@ class Encryptor
 		catch(IllegalBlockSizeException | BadPaddingException e) { e.printStackTrace(); }
 		return new byte[]{};
 	}
-	byte[] encrypt(String message, byte[] recipient){
-		byte[] messageCache =  encrypt(ArrayUtils.addAll( recipient, message.getBytes() ), "Cache");
-		byte[] messageC = encrypt(messageCache, "C");
-		byte[] messageB = encrypt(messageC, "B");
+	byte[] encrypt(String message, byte[] recipient)
+	{
+		byte[] messageCache = encrypt(ArrayUtils.addAll(recipient, message.getBytes()), "Cache");
+		byte[] messageC     = encrypt(messageCache, "C");
+		byte[] messageB     = encrypt(messageC, "B");
 		return encrypt(messageB, "A");
 	}
 	private byte[] getKey(String nodeName)

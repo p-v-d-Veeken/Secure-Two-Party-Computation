@@ -18,7 +18,6 @@ class MessageCommunicator
 		try
 		{
 			Socket socket = new Socket(Config.host, Config.port);
-			System.out.println(socket.isConnected());
 
 			encryptor = new Encryptor();
 			out = new DataOutputStream(socket.getOutputStream());
