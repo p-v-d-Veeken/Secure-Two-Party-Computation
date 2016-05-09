@@ -1,11 +1,14 @@
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.net.Socket;
 import java.security.SecureRandom;
 
 class MessageCommunicator
 {
+	private BufferedReader 	 in;
 	private Encryptor        encryptor;
 	private DataOutputStream out;
 	private Socket 			 socket;
@@ -19,6 +22,7 @@ class MessageCommunicator
 
 			this.encryptor = new Encryptor();
 			this.out = new DataOutputStream(socket.getOutputStream());
+			this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		}
 		catch(IOException e)	{ e.printStackTrace(); }
 	}
@@ -35,6 +39,10 @@ class MessageCommunicator
 
 	public String randomMessage(int index) {
 		return String.valueOf(index) + "-" + new BigInteger(130, random).toString(32);
+	}
+
+	public void listen() {
+		this.in.lines().forEach(System.out::println);
 	}
 
 	public void close() {
