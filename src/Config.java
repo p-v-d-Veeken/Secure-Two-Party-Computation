@@ -2,7 +2,7 @@ class Config
 {
 	/* Network Settings */
 	static final String   host             = "pets.ewi.utwente.nl";
-	static final int      port             = 62639;
+	static final int      port             = 60914;
 	/* Encryption Settings */
 	static final String   keyFileFormat    = "keys/public_key_";
 	static final String   keyFileExtension = ".pem";

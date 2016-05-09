@@ -7,6 +7,9 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
@@ -65,12 +68,30 @@ class Encryptor
 		catch(IllegalBlockSizeException | BadPaddingException e) { e.printStackTrace(); }
 		return new byte[]{};
 	}
-	byte[] encrypt(String message, byte[] recipient)
+	byte[] encrypt(String message, String recipient)
 	{
-		byte[] messageCache = encrypt(ArrayUtils.addAll(recipient, message.getBytes()), "Cache");
+		ByteBuffer recipient_buffer = ByteBuffer.allocate(8);
+		byte[] recipient_bytes = recipient.getBytes();
+		for (int i = 0; i < 8; i++) {
+			try {
+				recipient_buffer.put(recipient_bytes[i]);
+			} catch (ArrayIndexOutOfBoundsException e) {
+				recipient_buffer.put(" ".getBytes());
+			}
+		}
+		System.out.println("sending message: " + new String(ArrayUtils.addAll(recipient_buffer.array(), message.getBytes()), StandardCharsets.UTF_8));
+		byte[] messageCache = encrypt(ArrayUtils.addAll(recipient_buffer.array(), message.getBytes()), "Cache");
 		byte[] messageC     = encrypt(messageCache, "C");
 		byte[] messageB     = encrypt(messageC, "B");
-		return encrypt(messageB, "A");
+		return formatMessage(encrypt(messageB, "A"));
+	}
+	private byte[] formatMessage(byte[] message)
+	{
+		ByteBuffer bbLen = ByteBuffer.allocate(4);
+		bbLen.order(ByteOrder.BIG_ENDIAN);
+		bbLen.putInt(message.length);
+
+		return ArrayUtils.addAll( bbLen.array(), message );
 	}
 	private byte[] getKey(String nodeName)
 	{
