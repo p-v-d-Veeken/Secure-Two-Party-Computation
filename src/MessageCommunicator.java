@@ -24,7 +24,10 @@ class MessageCommunicator
 			this.out = new DataOutputStream(socket.getOutputStream());
 			this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		}
-		catch(IOException e)	{ e.printStackTrace(); }
+		catch(IOException e)	{
+			System.out.println("Can not connect to mixnet");
+			System.exit(1);
+		}
 	}
 	void sendMessage(String recipient, String message)
 	{

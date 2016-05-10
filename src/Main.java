@@ -1,16 +1,40 @@
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 
 public class Main {
 
-	public static void main(String[] args) throws InterruptedException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+	public static void main(String[] args) throws InterruptedException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, IOException {
 		MessageCommunicator msgCom = new MessageCommunicator();
 		System.out.println("Connected to mixnet");
 		Assignments assignments = new Assignments(msgCom);
 
-		int assignment = 2;
-
-		Assignments.class.getMethod("assignment" + assignment).invoke(assignments);
+		BufferedReader cin = new BufferedReader(new InputStreamReader(System.in));
+		String commands = "Commands:\n\tsend <recipient> <message>:\tSend a message\n\tassignment <number>:\t\tCall assignment code\n\tstop:\t\t\t\t\t\tStop the application";
+		System.out.println(commands);
+		System.out.print("Command: ");
+		Boolean running = true;
+		while(running) {
+			String input = cin.readLine();
+			if (input != null) {
+				String[] inputArg = input.split(" ");
+				switch(inputArg[0]) {
+					case "send":
+						msgCom.sendMessage(inputArg[1], inputArg[2]);
+						break;
+					case "assignment":
+						Assignments.class.getMethod("assignment" + Integer.parseInt(inputArg[1])).invoke(assignments);
+						break;
+					case "stop":
+						running = false;
+						break;
+					default:
+						System.out.println("command not recognized");
+						System.out.println(commands);
+				}
+				System.out.print("Command: ");
+			}
+		}
 
 		msgCom.close();
 	}
