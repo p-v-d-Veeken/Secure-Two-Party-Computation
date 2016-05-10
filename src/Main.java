@@ -1,9 +1,6 @@
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class Main {
 
@@ -12,12 +9,11 @@ public class Main {
 	public static void main(String[] args) throws InterruptedException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, IOException {
 		MessageCommunicator msgCom = new MessageCommunicator();
 		System.out.println("Connected to mixnet");
-		Assignments assignments = new Assignments(msgCom);
-
 		cin = new BufferedReader(new InputStreamReader(System.in));
-		String commands = "Commands:\n\tsend <recipient> <message>:\tSend a message\n\tassignment <number>:\t\tCall assignment code\n\tstop:\t\t\t\t\t\tStop the application";
+		String commands = "Commands:\n\tsend <recipient> <message>:\tSend a message\n\tassignment <number>:\t\tCall assignment code\n\tstop:\t\t\t\t\t\tStop the application\n\treload:\t\t\t\t\t\tReload the application";
 		System.out.println(commands);
 		System.out.print("Command: ");
+        Assignments assignments = new Assignments(msgCom);
 		Boolean running = true;
 		while(running) {
             if (!msgCom.isConnected()) {
@@ -31,11 +27,28 @@ public class Main {
 						msgCom.sendMessage(inputArg[1], inputArg[2]);
 						break;
 					case "assignment":
-						Assignments.class.getMethod("assignment" + Integer.parseInt(inputArg[1])).invoke(assignments);
+                        switch (Integer.parseInt(inputArg[1])) {
+                            case 1:
+                                assignments.assignment1();
+                                break;
+                            case 2:
+                                assignments.assignment2();
+                                break;
+                            case 3:
+                                assignments.assignment3();
+                                break;
+                            default:
+                                System.out.println("command not recognized");
+                        }
 						break;
 					case "stop":
 						running = false;
 						break;
+                    case "reload":
+                        msgCom = new MessageCommunicator();
+                        assignments = new Assignments(msgCom);
+                        System.out.println("Reloaded and connected to mixnet");
+                        break;
 					default:
 						System.out.println("command not recognized");
 						System.out.println(commands);
@@ -72,46 +85,45 @@ public class Main {
             Map<String, Integer> map = new HashMap<>();
             while(running) {
                 String input = cin.readLine();
-                if (map.containsKey(input)) {
-                    map.put(input, map.get(input) + 1);
-                } else {
-                    map.put(input, 1);
-                }
+                String target = null;
+                List<String> nodes = null;
                 switch(input) {
-                    case "A":
-                    case "a":
-                        input = "A";
-                        msgCom.sendMessage("TEST" + input, msgCom.randomMessage(map.get(input)), Arrays.asList("X", "X", "X", "A"));
+                    case "A": case "a":
+                        target = "A";
+                        nodes = Arrays.asList("X", "X", "X", "A");
                         break;
-                    case "B":
-                    case "b":
-                        input = "B";
-                        msgCom.sendMessage("TEST" + input, msgCom.randomMessage(map.get(input)), Arrays.asList("X", "X", "B", "A"));
+                    case "B": case "b":
+                        target = "B";
+                        nodes = Arrays.asList("X", "X", "B", "A");
                         break;
-                    case "C":
-                    case "c":
-                        input = "C";
-                        msgCom.sendMessage("TEST" + input, msgCom.randomMessage(map.get(input)), Arrays.asList("X", "C", "B", "A"));
+                    case "C": case "c":
+                        target = "C";
+                        nodes = Arrays.asList("X", "C", "B", "A");
                         break;
-                    case "Cache":
-                    case "cache":
-                    case "CACHE":
-                    case "cc":
-                        input = "Cache";
-                        msgCom.sendMessage("TEST" + input, msgCom.randomMessage(map.get(input)), Arrays.asList("Cache", "C", "B", "A"));
+                    case "Cache": case "cache": case "CACHE": case "cc":
+                        target = "Cache";
+                        nodes = Arrays.asList("Cache", "C", "B", "A");
                         break;
-                    case "STOP":
+                    case "STOP": case "stop": case "Stop":
                         running = false;
                         break;
                     default:
                         System.out.println("command not recognized");
                 }
+                if (map.containsKey(target)) {
+                    map.put(target, map.get(target) + 1);
+                } else {
+                    map.put(target, 1);
+                }
+                if (target != null) {
+                    this.msgCom.sendMessage("TEST" + target, this.msgCom.randomMessage(map.get(target)), nodes);
+                }
             }
-            for (String key : map.keySet()) {
+            map.keySet().forEach(key -> {
                 if (Arrays.asList("Cache", "C", "B", "A").contains(key)) {
                     System.out.println("Threshold for " + key + " is " + map.get(key));
                 }
-            }
+            });
 		}
 
 		public void assignment3() throws InterruptedException {
