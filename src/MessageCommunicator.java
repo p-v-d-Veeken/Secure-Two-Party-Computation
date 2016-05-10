@@ -5,6 +5,8 @@ import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.net.Socket;
 import java.security.SecureRandom;
+import java.util.Arrays;
+import java.util.List;
 
 class MessageCommunicator
 {
@@ -31,21 +33,21 @@ class MessageCommunicator
 	}
 	void sendMessage(String recipient, String message)
 	{
-		try
-		{
-			byte[] encryptedMsg = encryptor.encrypt(message, recipient);
-			out.write(encryptedMsg);
-			out.flush();
-		}
-		catch(IOException e) { e.printStackTrace(); }
+		this.sendMessage(recipient, message, Arrays.asList("Cache", "C", "B", "A"));
 	}
+    void sendMessage(String recipient, String message, List<String> keys)
+    {
+        try
+        {
+            byte[] encryptedMsg = encryptor.encrypt(message, recipient, keys);
+            out.write(encryptedMsg);
+            out.flush();
+        }
+        catch(IOException e) { e.printStackTrace(); }
+    }
 
 	public String randomMessage(int index) {
 		return String.valueOf(index) + "-" + new BigInteger(130, random).toString(32);
-	}
-
-	public void listen() {
-		this.in.lines().forEach(System.out::println);
 	}
 
 	public void close() {
@@ -58,4 +60,8 @@ class MessageCommunicator
 			e.printStackTrace();
 		}
 	}
+
+    public boolean isConnected() {
+        return this.socket.isConnected();
+    }
 }
