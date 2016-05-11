@@ -39,36 +39,36 @@ Stel: A = 2, B = 7, C = 3
              19. 2016-05-11T15:07:38.132557 - TESTCach22-nfdrg2p0qsaijsklmpe373e7js
              20. 2016-05-11T15:07:38.136457 - TESTCach19-kl06cdo7jqo35pf6a9mvqofel0
              21. 2016-05-11T15:07:38.140364 - TESTCach18-f469jrer5p0simjc1jiuftm0q5
-23. cc    ->
-24. cc    ->
-25. cc    ->
-26. cc    ->
-27. cc    ->
-28. cc    -> 22. 2016-05-11T15:07:44.660704 - TESTCach25-63hamcbgboc3fm0hm5ruqajkek
+23. cc    -> A = 1, B = 1 C = 0
+24. cc    -> A = 0, B = 3 C = 0
+25. cc    -> A = 1, B = 3 C = 0
+26. cc    -> A = 0, B = 5 C = 0
+27. cc    -> A = 1, B = 5 C = 0
+28. cc    -> 22. 2016-05-11T15:07:44.660704 - TESTCach25-63hamcbgboc3fm0hm5ruqajkek A = 0, B = 0 C = 1
              23. 2016-05-11T15:07:44.666149 - TESTCach24-ah1nam6jcehhda0d6tjl8ar2n
              24. 2016-05-11T15:07:44.683668 - TESTCach26-if6re74kkh1ukt7nkspdmu9m11
              25. 2016-05-11T15:07:44.697099 - TESTCach27-28bet380tn6aqgtdjn0itbrrek
              26. 2016-05-11T15:07:44.709999 - TESTCach21-cfp8o0q9mkh4i34gv5eei9g5pg
              27. 2016-05-11T15:07:44.713807 - TESTCach23-nisbdjco187pimtkh3s9nhcudk
-29. cc    ->
-30. cc    ->
-31. cc    ->
-32. cc    ->
-33. cc    ->
-34. cc    ->
-35. cc    ->
-36. cc    -> 28. 2016-05-11T15:08:16.181880 - TESTCach28-ffmri78ljk7140hv3cap2c4mfu
+29. cc    -> A = 1, B = 0 C = 1
+30. cc    -> A = 0, B = 2 C = 1
+31. cc    -> A = 1, B = 2 C = 1
+32. cc    -> A = 0, B = 4 C = 1
+33. cc    -> A = 1, B = 4 C = 1
+34. cc    -> A = 0, B = 6 C = 1
+35. cc    -> A = 1, B = 6 C = 1
+36. cc    -> 28. 2016-05-11T15:08:16.181880 - TESTCach28-ffmri78ljk7140hv3cap2c4mfu A = 0, B = 1 C = 2
              29. 2016-05-11T15:08:16.191194 - TESTCach29-dng51hmtqb0aqkj9v35dc65ntp
              30. 2016-05-11T15:08:16.203715 - TESTCach33-krhuc5d52tql3e4nah463lm5k6
              31. 2016-05-11T15:08:16.229796 - TESTCach31-l83jr7nooah2g88a23dqn66p7
              32. 2016-05-11T15:08:16.242955 - TESTCach35-bcb7vo35ag3tqbvvnhtoc2ppmc
              33. 2016-05-11T15:08:16.246902 - TESTCach30-b5n9dbdpagn61b1gcpn0nmjbdn
-37. cc    ->
-38. cc    ->
-39. cc    ->
-40. cc    ->
-41. cc    ->
-42. cc    -> 34. 2016-05-11T15:09:34.152647 - TESTCach38-b7a4im3orjt7knh8a09b9uucsc
+37. cc    -> A = 1, B = 1 C = 2
+38. cc    -> A = 0, B = 3 C = 2
+39. cc    -> A = 1, B = 3 C = 2
+40. cc    -> A = 0, B = 5 C = 2
+41. cc    -> A = 1, B = 5 C = 2
+42. cc    -> 34. 2016-05-11T15:09:34.152647 - TESTCach38-b7a4im3orjt7knh8a09b9uucsc A = 0, B = 0 C = 0
              35. 2016-05-11T15:09:34.167149 - TESTCach34-h7v2rqbq9ttsaoidenv6qpi07a
              36. 2016-05-11T15:09:34.184753 - TESTCach32-o4a7h1dfug7sogod18ltcfj9mc
              37. 2016-05-11T15:09:34.197717 - TESTCach42-gjrg72v7udbk4rs5b0invu3fm6
