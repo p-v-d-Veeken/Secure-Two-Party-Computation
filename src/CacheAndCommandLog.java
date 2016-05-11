@@ -55,7 +55,7 @@ class CacheAndCommandLog
 			for(i = 0; (line = br.readLine()) != null; i++)
 			{
 				content += i >= cachePtr
-				           ? line + "\n"
+				           ? (i + 1) + ". " + line + "\n"
 				           : "";
 			}
 			cachePtr = i;
