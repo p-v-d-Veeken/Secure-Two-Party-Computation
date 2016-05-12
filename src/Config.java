@@ -14,4 +14,8 @@ class Config
 	static final String[] nodes            = new String[]{"A", "B", "C", "Cache"};
 	/* Log Settings */
 	static final String   cacheLog         = "log/cache";
+	/* CLI Settings */
+	static final String   commands         = "Commands:\n\tsend <recipient> <message>:\tSend a message\n\tassignment " +
+		"<number>:\t\tCall assignment code\n\tstop:\t\t\t\t\t\tStop the application\n\treload:\t\t\t\t\t\tReload the " +
+		"application";
 }

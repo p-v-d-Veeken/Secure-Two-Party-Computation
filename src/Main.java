@@ -4,33 +4,29 @@ import java.util.*;
 
 public class Main
 {
+	private static final BufferedReader cin = new BufferedReader(new InputStreamReader(System.in));
 
-	private static BufferedReader cin;
-
-	public static void main(String[] args)
-		throws InterruptedException, NoSuchMethodException, InvocationTargetException, IllegalAccessException,
-		IOException
+	public static void main(String[] args) throws InterruptedException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, IOException
 	{
-		MessageCommunicator msgCom = new MessageCommunicator();
+		MessageCommunicator msgCom      = new MessageCommunicator();
+		Assignments         assignments = new Assignments(msgCom);
+		Boolean             running     = true;
+
 		System.out.println("Connected to mixnet");
-		cin = new BufferedReader(new InputStreamReader(System.in));
-		String commands = "Commands:\n\tsend <recipient> <message>:\tSend a message\n\tassignment <number>:\t\tCall " +
-			"assignment code\n\tstop:\t\t\t\t\t\tStop the application\n\treload:\t\t\t\t\t\tReload the application";
-		System.out.println(commands);
+		System.out.println(Config.commands);
 		System.out.print("Command: ");
-		Assignments assignments = new Assignments(msgCom);
-		Boolean     running     = true;
+
 		while(running)
 		{
 			if(!msgCom.isConnected())
-			{
-				running = false;
-			}
+			{   running = false; }
+
 			String input = cin.readLine();
+
 			if(input != null)
 			{
 				String[] inputArg = input.split(" ");
-				switch(inputArg[0])
+				switch(inputArg[0]) //These are all possible commands which can be entered into the console
 				{
 					case "send":
 						msgCom.sendMessage(inputArg[1], inputArg[2]);
@@ -61,30 +57,27 @@ public class Main
 						break;
 					default:
 						System.out.println("command not recognized");
-						System.out.println(commands);
+						System.out.println(Config.commands);
 				}
 				System.out.print("Command: ");
 			}
 		}
-
 		msgCom.close();
 	}
-
 	private static class Assignments
 	{
-
 		private MessageCommunicator msgCom;
 
-		public Assignments(MessageCommunicator msgCom)
+		Assignments(MessageCommunicator msgCom)
 		{
 			this.msgCom = msgCom;
 		}
 
-		public void assignment1() throws InterruptedException
+		void assignment1() throws InterruptedException
 		{
 			msgCom.sendMessage("TIM", "4003047-4095812");
 
-			for(int i = 1; i < 10; i++)
+			for(int i = 1; i < 10; i++) //Send messages with increasing numbers
 			{
 				for(int j = 0; j < i; j++)
 				{
@@ -93,46 +86,40 @@ public class Main
 				Thread.sleep(10000);
 			}
 		}
-
-		public void assignment2() throws InterruptedException, IOException
+		void assignment2() throws InterruptedException, IOException
 		{
 			Boolean running = true;
-			System.out.println("Enter the name of the node up to which you want to use the correct key (A, B, C or Cache)" +
+			System.out.println("Enter the name of the node up to which you want to use the correct key (A, B, C or Cache)"+
 				", or stop");
-			Map<String, Integer> map = new HashMap<>();
+			Map<String, Integer> map = new HashMap<>(); //Keeps track of how many messages have been sent to a node
 			CacheAndCommandLog   log = new CacheAndCommandLog();
+
 			while(running)
 			{
 				String       input  = cin.readLine();
 				String       target = null;
 				List<String> nodes  = null;
-				switch(input)
+
+				switch(input.toLowerCase())
 				{
-					case "A":
 					case "a":
-						target = "A";
+						target = "A"; //See MessageCommunicator.sendMessage and Encryptor.encrypt (line 73)
 						nodes = Arrays.asList("X", "X", "X", "A");
 						break;
-					case "B":
 					case "b":
 						target = "B";
 						nodes = Arrays.asList("X", "X", "B", "A");
 						break;
-					case "C":
 					case "c":
 						target = "C";
 						nodes = Arrays.asList("X", "C", "B", "A");
 						break;
-					case "Cache":
 					case "cache":
-					case "CACHE":
 					case "cc":
 						target = "Cache";
 						nodes = Arrays.asList("Cache", "C", "B", "A");
 						break;
-					case "STOP":
 					case "stop":
-					case "Stop":
 						running = false;
 						break;
 					case "log":
@@ -142,32 +129,19 @@ public class Main
 						System.out.println("command not recognized");
 				}
 				if(map.containsKey(target))
-				{
-					map.put(target, map.get(target) + 1);
-				}
+				{  map.put(target, map.get(target) + 1); }
 				else
-				{
-					map.put(target, 1);
-				}
+				{  map.put(target, 1); }
 				if(target != null)
-				{
-					this.msgCom.sendMessage("TEST" + target, this.msgCom.randomMessage(map.get(target)), nodes);
-				}
-				Thread.sleep(1000);
-				log.addCommand(input);
-			}
-			map.keySet().forEach(key -> {
-				if(Arrays.asList("Cache", "C", "B", "A").contains(key))
-				{
-					System.out.println("Threshold for " + key + " is " + map.get(key));
-				}
-			});
-		}
+				{  this.msgCom.sendMessage("TEST" + target, this.msgCom.randomMessage(map.get(target)), nodes); }
 
-		public void assignment3() throws InterruptedException
+				Thread.sleep(1000); //To ensure the message has reached the mixnet and has been entered into the cache log
+				log.addCommand(input); //This keeps track of the sent commands and the corresponding changes in the log.
+			}
+		}
+		void assignment3() throws InterruptedException
 		{
 			//TODO
 		}
 	}
-
 }

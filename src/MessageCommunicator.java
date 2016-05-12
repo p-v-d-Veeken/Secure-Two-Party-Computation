@@ -1,7 +1,5 @@
-import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.net.Socket;
 import java.security.SecureRandom;
@@ -10,23 +8,23 @@ import java.util.List;
 
 class MessageCommunicator
 {
-	private BufferedReader 	 in;
 	private Encryptor        encryptor;
 	private DataOutputStream out;
-	private Socket 			 socket;
-	private SecureRandom 	 random = new SecureRandom();
+	private Socket           socket;
+	private SecureRandom     random;
 
 	MessageCommunicator()
 	{
+		random = new SecureRandom();
+
 		try
 		{
-			this.socket = new Socket(Config.host, Config.port);
-
-			this.encryptor = new Encryptor();
-			this.out = new DataOutputStream(socket.getOutputStream());
-			this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			socket = new Socket(Config.host, Config.port);
+			encryptor = new Encryptor();
+			out = new DataOutputStream(socket.getOutputStream());
 		}
-		catch(IOException e)	{
+		catch(IOException e)
+		{
 			System.out.println("Can not connect to mixnet");
 			System.exit(1);
 		}
@@ -35,33 +33,35 @@ class MessageCommunicator
 	{
 		this.sendMessage(recipient, message, Arrays.asList("Cache", "C", "B", "A"));
 	}
-    void sendMessage(String recipient, String message, List<String> keys)
-    {
-        try
-        {
-            byte[] encryptedMsg = encryptor.encrypt(message, recipient, keys);
-            out.write(encryptedMsg);
-            out.flush();
-        }
-        catch(IOException e) { e.printStackTrace(); }
-    }
-
-	public String randomMessage(int index) {
+	//By specifying a node which is not in Config.nodes, a message can be send which will trigger an error in the mixnet
+	void sendMessage(String recipient, String message, List<String> nodes)
+	{
+		try
+		{
+			byte[] encryptedMsg = encryptor.encrypt(message, recipient, nodes);
+			out.write(encryptedMsg);
+			out.flush();
+		}
+		catch(IOException e) { e.printStackTrace(); }
+	}
+	String randomMessage(int index)
+	{
 		return String.valueOf(index) + "-" + new BigInteger(130, random).toString(32);
 	}
+	void close()
+	{
+		try
+		{
+			out.flush();
+			out.close();
+			socket.close();
 
-	public void close() {
-		try {
-			this.out.flush();
-			this.out.close();
-			this.socket.close();
 			System.out.println("Connection to mixnet closed");
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
+		catch(IOException e) { e.printStackTrace(); }
 	}
-
-    public boolean isConnected() {
-        return this.socket.isConnected();
-    }
+	boolean isConnected()
+	{
+		return this.socket.isConnected();
+	}
 }

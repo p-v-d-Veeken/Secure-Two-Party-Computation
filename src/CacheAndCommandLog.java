@@ -18,7 +18,8 @@ class CacheAndCommandLog
 		try
 		{
 			cacheUrl = new URL("http://" + Config.host + ":" + Config.envPort + "/" + Config.cacheLog);
-			log = new TreeMap<>(new Comparator<String>(){
+			log = new TreeMap<>(new Comparator<String>()
+			{
 				@Override
 				public int compare(String o1, String o2)
 				{
@@ -31,11 +32,13 @@ class CacheAndCommandLog
 			cachePtr = 0;
 			counter = 0;
 		}
-		catch(MalformedURLException e) { e.printStackTrace(); }
+		catch(MalformedURLException e)
+		{  e.printStackTrace(); }
 	}
 	void addCommand(String command)
 	{
-		if(command.equals("log")) { return; }
+		if(command.equals("log"))
+		{  return; }
 
 		counter++;
 		String content = getNewContent();
@@ -61,7 +64,9 @@ class CacheAndCommandLog
 			cachePtr = i;
 			br.close();
 		}
-		catch(IOException e) { e.printStackTrace(); }
+		catch(IOException e)
+		{  e.printStackTrace(); }
+
 		return content;
 	}
 	void dumpLog()
@@ -80,7 +85,8 @@ class CacheAndCommandLog
 
 		for(int i = 0; i < entries.length; i++)
 		{
-			if(i != 0) { System.out.print("             "); }
+			if(i != 0)
+			{  System.out.print("             "); }
 			System.out.println(entries[i]);
 		}
 	}
