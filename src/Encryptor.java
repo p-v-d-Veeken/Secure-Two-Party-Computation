@@ -37,7 +37,7 @@ class Encryptor
 			.stream(Config.nodes)
 			.collect(Collectors.toMap(
 				node -> node,
-				this::getKey
+				this::getRSAKey
 			));
 		this.AESKeys = this.RSAKeys.keySet()
 			.stream()
@@ -82,15 +82,12 @@ class Encryptor
 	{
 		try
 		{
-			byte[] IV     = Config.AESIV.getBytes();
-			byte[] AESKey = cipherData.getMiddle();
-			byte[] encryptedKey, encryptedMsg, encryptedAll;
+			byte[] IV           = Config.AESIV.getBytes();
+			byte[] AESKey       = cipherData.getMiddle();
+			byte[] encryptedKey = cipherData.getRight().doFinal(ArrayUtils.addAll(AESKey, IV));
+			byte[] encryptedMsg = cipherData.getLeft().doFinal(message);
 
-			encryptedKey = cipherData.getRight().doFinal(ArrayUtils.addAll(AESKey, IV));
-			encryptedMsg = cipherData.getLeft().doFinal(message);
-			encryptedAll = ArrayUtils.addAll(encryptedKey, encryptedMsg);
-
-			return encryptedAll;
+			return ArrayUtils.addAll(encryptedKey, encryptedMsg);
 		}
 		catch(IllegalBlockSizeException | BadPaddingException e)
 		{  e.printStackTrace(); }
@@ -110,7 +107,7 @@ class Encryptor
 
 		return ArrayUtils.addAll(bbLen.array(), message);
 	}
-	private byte[] getKey(String nodeName) //Reads the key for the specified node from the ./keys directory
+	private byte[] getRSAKey(String nodeName) //Reads the key for the specified node from the ./keys directory
 	{
 		String key = "";
 

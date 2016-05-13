@@ -141,7 +141,11 @@ public class Main
 		}
 		void assignment3() throws InterruptedException
 		{
-			//TODO
+			for(int i = 1; i < 1000; i++) //Flood the nodes
+			{
+				msgCom.sendMessage("FAKE" + i, msgCom.randomMessage(i ));
+				Thread.sleep(100);
+			}
 		}
 	}
 }
