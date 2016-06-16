@@ -6,17 +6,30 @@ public class Main
 
 	public static void main(String[] args) throws Exception
 	{
-		System.out.println("Enter the desired database size:");
+		System.out.print("Please enter an assignment number, or `exit` to quit program:\n> " );
 
-		int      size     = scanner.nextInt();
-		Database db       = new Database(size);
-		Paillier paillier = new Paillier(Config.modLength);
-		long     tic      = System.nanoTime();
+		while(true)
+		{
+			boolean skipPrint = false;
+			String  input     = scanner.nextLine();
 
-		db.encryptDatabase(paillier);
-
-		long toc = System.nanoTime();
-
-		System.out.println(String.format("%1$d entries encrypted in %2$d ns", size, toc - tic));
+			switch(input)
+			{
+				case "1":
+					Assignment.assignment1(scanner);
+					break;
+				case "exit":
+					System.out.println("Bye bye!");
+					System.exit(0);
+					break;
+				case "":
+					skipPrint = true;
+					break;
+				default:
+					System.out.println("Assignment number not recognized");
+					break;
+			}
+			System.out.print(!skipPrint ? "Please enter an assignment number, or `exit` to quit program:\n> " : "");
+		}
 	}
 }

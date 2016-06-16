@@ -1,11 +1,11 @@
 import java.math.BigInteger;
 import java.util.Random;
 
-public class Generator
+class Generator
 {
 	private final static Random random = new Random();
 
-	public static BigInteger randName()
+	static BigInteger randName()
 	{
 		String name = "";
 
@@ -16,15 +16,15 @@ public class Generator
 		}
 		return new BigInteger(name.getBytes());
 	}
-	public static BigInteger randAge()
+	static BigInteger randAge()
 	{
 		int age = random.nextInt(Config.ageMax - Config.ageMin + 1) + Config.ageMin;
 
 		return BigInteger.valueOf(age);
 	}
-	public static BigInteger randIncome()
+	static BigInteger randIncome()
 	{
-		int income = random.nextInt(Config.ageMax - Config.ageMin + 1) + Config.ageMin;
+		int income = random.nextInt(Config.incomeMax - Config.incomeMin + 1) + Config.incomeMin;
 
 		return BigInteger.valueOf(income);
 	}

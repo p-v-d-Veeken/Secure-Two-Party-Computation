@@ -2,11 +2,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Database
+class Database
 {
 	private List<DatabaseEntry> db;
 
-	public Database(int size)
+	Database(int size)
 	{
 		db = new ArrayList<>(size);
 
@@ -18,7 +18,7 @@ public class Database
 		}
 		int a = 0;
 	}
-	public void encryptDatabase(Paillier paillier)
+	void encryptDatabase(Paillier paillier)
 	{
 		int  a = 0;
 		db = db.stream()
