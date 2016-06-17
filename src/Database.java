@@ -16,11 +16,9 @@ class Database
 
 			db.add(entry);
 		}
-		int a = 0;
 	}
 	void encryptDatabase(Paillier paillier)
 	{
-		int  a = 0;
 		db = db.stream()
 			.map(entry -> DatabaseEntry.encryptEntry(entry, paillier))
 			.collect(Collectors.toList());
