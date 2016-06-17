@@ -3,7 +3,7 @@ import java.util.Random;
 
 class Generator
 {
-	private final static Random random = new Random();
+	final static Random random = new Random();
 
 	static BigInteger randName()
 	{
