@@ -23,4 +23,8 @@ class Database
 			.map(entry -> DatabaseEntry.encryptEntry(entry, paillier))
 			.collect(Collectors.toList());
 	}
+	public List<DatabaseEntry> getEntries()
+	{
+		return entries;
+	}
 }

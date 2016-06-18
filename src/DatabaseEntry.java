@@ -1,3 +1,4 @@
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
 
 class DatabaseEntry
@@ -23,6 +24,23 @@ class DatabaseEntry
 		catch(Exception e) { e.printStackTrace(); }
 
 		return entry;
+	}
+	BigInteger get(Config.column column)
+	{
+		BigInteger value = BigInteger.valueOf(-1);
+
+		try
+		{
+			String columnName = column.toString().toLowerCase();
+			String getterName = "get" + columnName.substring(0, 1).toUpperCase() + columnName.substring(1);
+
+			value = ((BigInteger) this.getClass().getDeclaredMethod(getterName).invoke(this));
+		}
+		catch(IllegalAccessException | InvocationTargetException | NoSuchMethodException e)
+		{
+			e.printStackTrace();
+		}
+		return value;
 	}
 	BigInteger getIncome()
 	{

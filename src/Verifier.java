@@ -36,7 +36,7 @@ class Verifier
 					.multiply(BigInteger.valueOf((d1Bits >> j) & 1))
 				);
 			}
-			t.add(paillier.encrypt(ti));
+			t.add(paillier.encrypt(ti.mod(paillier.getN())));
 		}
 		return t;
 	}

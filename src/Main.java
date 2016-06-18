@@ -21,6 +21,9 @@ public class Main
 				case "2":
 					Assignment.assignment2(scanner);
 					break;
+				case "3":
+					Assignment.assignment3(scanner);
+					break;
 				case "exit":
 					System.out.println("Bye bye!");
 					System.exit(0);
