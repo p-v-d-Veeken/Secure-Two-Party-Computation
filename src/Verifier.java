@@ -3,26 +3,23 @@ import java.util.Vector;
 
 class Verifier
 {
-	private Paillier   paillier;
-	private BigInteger d1;
+	private           Paillier   paillier;
+	private transient BigInteger d1;
+	private transient BigInteger A;
 
 	Verifier(Paillier paillier)
 	{
 		this.paillier = paillier;
 	}
-	Vector<BigInteger> getD1D2(BigInteger dEnc, int l) throws Exception
+	BigInteger getD2(BigInteger dEnc, int l) throws Exception
 	{
-		BigInteger         d    = paillier.decrypt(dEnc);
-		BigInteger         d1   = d.mod(BigInteger.valueOf(2).pow(l)); //d1 <= d mod 2^l
-		BigInteger         d2   = d.divide(BigInteger.valueOf(2).pow(l)); //d2 <= floor(d / 2^l)
-		Vector<BigInteger> d1d2 = new Vector<>(2);
-
-		d1d2.add(d1);
-		d1d2.add(d2);
+		BigInteger d  = paillier.decrypt(dEnc);
+		BigInteger d1 = d.mod(BigInteger.valueOf(2).pow(l)); //d1 <= d mod 2^l
+		BigInteger d2 = d.divide(BigInteger.valueOf(2).pow(l)); //d2 <= floor(d / 2^l)
 
 		this.d1 = d1;
 
-		return d1d2;
+		return paillier.encrypt(d2);
 	}
 	Vector<BigInteger> getT(int l) throws Exception
 	{
@@ -42,5 +39,23 @@ class Verifier
 			t.add(paillier.encrypt(ti));
 		}
 		return t;
+	}
+	BigInteger getA(BigInteger ei) throws Exception
+	{
+		if(A != null && A.equals(BigInteger.ONE))
+		{
+			return A;
+		}
+		ei = paillier.decrypt(ei);
+
+		if(ei.equals(BigInteger.ZERO))
+		{
+			return A = paillier.encrypt(BigInteger.ONE);
+		}
+		else if(A == null)
+		{
+			A = paillier.encrypt(BigInteger.ZERO);
+		}
+		return A;
 	}
 }

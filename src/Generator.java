@@ -1,9 +1,10 @@
 import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.Random;
 
 class Generator
 {
-	final static Random random = new Random();
+	final static Random random = new SecureRandom();
 
 	static BigInteger randName()
 	{
