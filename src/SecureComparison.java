@@ -20,11 +20,12 @@ class SecureComparison
 			.mod(paillier.getNsquare());
 
 		//BigInteger       r    = new BigInteger(80 + l + 1, Generator.random)).mod(paillier.getN();
-		BigInteger         r    = BigInteger.valueOf(27); //Hard coded random value in for verifying correctness
+		BigInteger         r    = BigInteger.valueOf(27); //Hard coded random value for verifying correctness
 		BigInteger         d    = z.multiply(paillier.encrypt(r)).mod(paillier.getNsquare()); //[d] = [z].[r]
 		Vector<BigInteger> d1d2 = verifier.getD1D2(d, l);
+		Vector<BigInteger> t    = verifier.getT(l);
 
-		System.out.println(d1d2);
+		System.out.println(t);
 
 		return 0;
 	}
