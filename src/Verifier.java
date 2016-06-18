@@ -24,7 +24,7 @@ class Verifier
 
 		return d1d2;
 	}
-	Vector<BigInteger> getT(int l)
+	Vector<BigInteger> getT(int l) throws Exception
 	{
 		Vector<BigInteger> t      = new Vector<>(l - 1);
 		byte               d1Bits = d1.byteValue();
@@ -39,7 +39,7 @@ class Verifier
 					.multiply(BigInteger.valueOf((d1Bits >> j) & 1))
 				);
 			}
-			t.add(ti);
+			t.add(paillier.encrypt(ti));
 		}
 		return t;
 	}
