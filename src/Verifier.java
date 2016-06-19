@@ -28,7 +28,7 @@ class Verifier
 
 		for(int i = 0; i < l; i++)
 		{
-			BigInteger ti = BigInteger.ZERO.add(BigInteger.valueOf((d1Bits >> i) & 1)); //t_i = d^1_i
+			BigInteger ti = BigInteger.valueOf((d1Bits >> i) & 1); //t_i = d^1_i
 
 			for(int j = i + 1; j < l; j++)
 			{

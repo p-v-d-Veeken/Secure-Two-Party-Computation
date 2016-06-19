@@ -20,10 +20,11 @@ class Database
 	void encryptDatabase(Paillier paillier)
 	{
 		entries = entries.stream()
+			.parallel()
 			.map(entry -> DatabaseEntry.encryptEntry(entry, paillier))
 			.collect(Collectors.toList());
 	}
-	public List<DatabaseEntry> getEntries()
+	List<DatabaseEntry> getEntries()
 	{
 		return entries;
 	}
