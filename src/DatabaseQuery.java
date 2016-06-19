@@ -26,12 +26,13 @@ class DatabaseQuery
 	{
 		try
 		{
-			SecureComparison comp  = new SecureComparison(paillier);
-			BigInteger       res   = paillier.decrypt(comp.compare(a, b, Config.maxBitLength));
+			SecureComparison comp = new SecureComparison(paillier);
+			BigInteger       res  = paillier.decrypt(comp.compare(a, b, Config.maxBitLength));
 
 			return res.equals(BigInteger.ONE);
 		}
 		catch(Exception e) { e.printStackTrace(); }
+
 		return false;
 	}
 }
