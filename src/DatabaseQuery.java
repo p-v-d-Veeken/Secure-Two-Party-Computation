@@ -1,6 +1,6 @@
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 class DatabaseQuery
 {
@@ -18,19 +18,20 @@ class DatabaseQuery
 		{
 			throw new Exception("Non-numeric column specified.");
 		}
-		List<DatabaseEntry> result = new ArrayList<>();
-
-		for(DatabaseEntry entry : database.getEntries())
+		return database.getEntriesStream()
+			.filter(entry -> compare(entry.get(column), value))
+			.collect(Collectors.toList());
+	}
+	private boolean compare(BigInteger a, BigInteger b)
+	{
+		try
 		{
 			SecureComparison comp  = new SecureComparison(paillier);
-			BigInteger       dbVal = entry.get(column);
-			BigInteger       res   = paillier.decrypt(comp.compare(dbVal, value, Config.maxBitLength));
+			BigInteger       res   = paillier.decrypt(comp.compare(a, b, Config.maxBitLength));
 
-			if(res.equals(BigInteger.ONE))
-			{
-				result.add(entry);
-			}
+			return res.equals(BigInteger.ONE);
 		}
-		return result;
+		catch(Exception e) { e.printStackTrace(); }
+		return false;
 	}
 }

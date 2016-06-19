@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 class Database
 {
@@ -24,8 +25,8 @@ class Database
 			.map(entry -> DatabaseEntry.encryptEntry(entry, paillier))
 			.collect(Collectors.toList());
 	}
-	List<DatabaseEntry> getEntries()
+	Stream<DatabaseEntry> getEntriesStream()
 	{
-		return entries;
+		return entries.parallelStream();
 	}
 }
