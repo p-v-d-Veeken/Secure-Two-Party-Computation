@@ -1,5 +1,7 @@
 import java.math.BigInteger;
 import java.util.Vector;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 class Verifier
 {
@@ -23,22 +25,28 @@ class Verifier
 	}
 	Vector<BigInteger> getT(int l) throws Exception
 	{
-		Vector<BigInteger> t      = new Vector<>(l - 1);
-		byte               d1Bits = d1.byteValue();
+		byte d1Bits = d1.byteValue();
 
-		for(int i = 0; i < l; i++)
-		{
-			BigInteger ti = BigInteger.valueOf((d1Bits >> i) & 1); //t_i = d^1_i
+		return IntStream.range(0, l)
+			.parallel()
+			.mapToObj(i -> {
+				try
+				{
+					BigInteger ti = BigInteger.valueOf((d1Bits >> i) & 1); //t_i = d^1_i
 
-			for(int j = i + 1; j < l; j++)
-			{
-				ti = ti.add(BigInteger.valueOf(2).pow(j) //t_i += sum^{l-1}_{j=i+1} 2^j * d^1_j
-					.multiply(BigInteger.valueOf((d1Bits >> j) & 1))
-				);
-			}
-			t.add(paillier.encrypt(ti.mod(paillier.getN())));
-		}
-		return t;
+					for(int j = i + 1; j < l; j++)
+					{
+						ti = ti.add(BigInteger.valueOf(2).pow(j) //t_i += sum^{l-1}_{j=i+1} 2^j * d^1_j
+							.multiply(BigInteger.valueOf((d1Bits >> j) & 1))
+						);
+					}
+					return paillier.encrypt(ti.mod(paillier.getN()));
+				}
+				catch(Exception e) { e.printStackTrace(); }
+
+				return BigInteger.ZERO;
+			})
+			.collect(Collectors.toCollection(Vector<BigInteger>::new));
 	}
 	BigInteger getA(BigInteger ei) throws Exception
 	{

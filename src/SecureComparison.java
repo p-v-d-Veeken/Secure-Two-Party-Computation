@@ -1,5 +1,7 @@
 import java.math.BigInteger;
 import java.util.Vector;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 class SecureComparison
 {
@@ -53,37 +55,62 @@ class SecureComparison
 	}
 	private Vector<BigInteger> calculateV(BigInteger s, BigInteger r, int l) throws Exception
 	{
-		Vector<BigInteger> v     = new Vector<>(l);
 		byte               rBits = r.byteValue();
 
-		for(int i = 0; i < l; i++)
-		{
-			BigInteger vi = s.subtract(BigInteger.valueOf((rBits >> i) & 1)); //v_i = s - r_i
+		return IntStream.range(0, l)
+			.parallel()
+			.mapToObj(i -> {
+				try
+				{
+					BigInteger vi = s.subtract(BigInteger.valueOf((rBits >> i) & 1)); //v_i = s - r_i
 
-			for(int j = i + 1; j < l; j++)
-			{
-				vi = vi.subtract(BigInteger.valueOf(2).pow(j) //v_i += sum^{l-1}_{j=i+1} 2^j * r_j
-					.multiply(BigInteger.valueOf((rBits >> j) & 1))
-				);
-			}
-			v.add(paillier.encrypt(vi.mod(paillier.getN())));
-		}
-		return v;
+					for(int j = i + 1; j < l; j++)
+					{
+						vi = vi.subtract(BigInteger.valueOf(2).pow(j) //v_i += sum^{l-1}_{j=i+1} 2^j * r_j
+							.multiply(BigInteger.valueOf((rBits >> j) & 1))
+						);
+					}
+					return paillier.encrypt(vi.mod(paillier.getN()));
+				}
+				catch(Exception e) { e.printStackTrace(); }
+
+				return BigInteger.ZERO;
+			})
+			.collect(Collectors.toCollection(Vector<BigInteger>::new));
 	}
 	private BigInteger calculateA(
 		Vector<BigInteger> v, Vector<BigInteger> t, BigInteger s, Vector<BigInteger> h, int l) throws Exception
 	{
-		BigInteger A = BigInteger.ONE;
+		BigInteger A = BigInteger.ONE.negate();
 
-		for(int i = 0; i < l; i++)
-		{
-			BigInteger ci = v.get(i) //[c_i] = [v_i] * [t_i]
-				.multiply(t.get(i))
-				.mod(paillier.getNsquare());
-			BigInteger ei = ci.modPow(h.get(i), paillier.getNsquare()); //[e_i] = [c_i]^{h_i}
+		IntStream.range(1, l)
+			.mapToObj(i -> {
+				return new BigInteger[] {v.get(i), t.get(i), h.get(i)};
+			})
+			.parallel()
+			.map(vth -> {
+				try
+				{
+					BigInteger ci = vth[0]
+						.multiply(vth[1])
+						.mod(paillier.getNsquare());
+					BigInteger ei = ci.modPow(vth[2], paillier.getNsquare());
 
-			A = verifier.getA(ei); //e_i == 0 ? A = 1 : A = 0
-		}
+					return verifier.getA(ei);
+				}
+				catch(Exception e)
+				{
+					e.printStackTrace();
+				}
+				return A;
+			})
+		.reduce(A, (pv, cv) -> {
+			if(cv.equals(BigInteger.ONE) || pv.equals(BigInteger.ONE))
+			{
+				return BigInteger.ONE;
+			}
+			return cv;
+		});
 		return !s.equals(BigInteger.ONE)                            //If s != 1
 		       ? paillier.encrypt(BigInteger.ONE)                   //Then [A] = [1 - A]
 			       .multiply(A.modInverse(paillier.getNsquare()))
