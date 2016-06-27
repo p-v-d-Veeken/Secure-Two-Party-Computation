@@ -8,7 +8,7 @@ class Assignment
 	{
 		System.out.print("Enter the desired database size:\n> ");
 
-		int      size     = scanner.nextInt();
+		int size = scanner.nextInt();
 
 		System.out.println("Generating and encrypting database...");
 
@@ -67,13 +67,13 @@ class Assignment
 		database.encryptDatabase(paillier);
 		System.out.print("Enter the desired age:\n> ");
 
-		int age = scanner.nextInt();
+		BigInteger age = BigInteger.valueOf(scanner.nextInt());
 
 		System.out.println("Performing search to find people whose age is greater than " + age + "...");
 
 		DatabaseQuery       query  = new DatabaseQuery(paillier, database);
 		long                tick   = System.currentTimeMillis();
-		List<DatabaseEntry> result = query.findGreaterThan(Config.column.AGE, paillier.encrypt(BigInteger.valueOf(age)));
+		List<DatabaseEntry> result = query.findGreaterThan(Config.column.AGE, paillier.encrypt(age), age.bitLength());
 		long                tock   = System.currentTimeMillis();
 
 		System.out.println("Found " + result.size() + " people older than " + age + " in " + (tock - tick) + " ms.");
@@ -95,6 +95,6 @@ class Assignment
 		tock = System.currentTimeMillis();
 
 		System.out.println(
-			"Total income of the found people is " + income + ". Computation took "  + (tock - tick) + " ms.");
+			"Total income of the found people is " + income + ". Computation took " + (tock - tick) + " ms.");
 	}
 }

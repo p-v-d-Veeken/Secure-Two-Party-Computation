@@ -21,7 +21,7 @@ class SecureComparison
 		BigInteger         d2 = verifier.getD2(d, l);      //[d^1] = d mod 2^l; [d^2] = floor(d / 2^l)
 		Vector<BigInteger> t  = verifier.getT(l);          //[t_i] = d^1_i + sum^{l-1}_{j=i+1} 2^j * d^1_j
 		BigInteger         s  = Generator.random.nextBoolean() ? BigInteger.ONE : BigInteger.valueOf(-1);
-		Vector<BigInteger> h  = calculateH(l);             // h_0,..., h_{l-1} = rand int in Z*_N
+		Vector<BigInteger> h  = calculateH(l);             //h_0,..., h_{l-1} = rand int in Z*_N
 		Vector<BigInteger> v  = calculateV(s, r, l);       //[v_i] = s - r_i - sum^{l - 1}_{j = i + 1} 2^j * r_j
 		BigInteger         A  = calculateA(v, t, s, h, l);
 
@@ -88,7 +88,7 @@ class SecureComparison
 				return new BigInteger[] {v.get(i), t.get(i), h.get(i)};
 			})
 			.parallel()
-			.map(vth -> {
+			.map(vth -> { //vth = {v_i, t_i, h_i}
 				try
 				{
 					BigInteger ci = vth[0]
@@ -98,19 +98,16 @@ class SecureComparison
 
 					return verifier.getA(ei);
 				}
-				catch(Exception e)
-				{
-					e.printStackTrace();
-				}
+				catch(Exception e)  { e.printStackTrace(); }
 				return A;
 			})
-		.reduce(A, (pv, cv) -> {
-			if(cv.equals(BigInteger.ONE) || pv.equals(BigInteger.ONE))
-			{
-				return BigInteger.ONE;
-			}
-			return cv;
-		});
+			.reduce(A, (pv, cv) -> {
+				if(cv.equals(BigInteger.ONE) || pv.equals(BigInteger.ONE))
+				{
+					return BigInteger.ONE;
+				}
+				return cv;
+			});
 		return !s.equals(BigInteger.ONE)                            //If s != 1
 		       ? paillier.encrypt(BigInteger.ONE)                   //Then [A] = [1 - A]
 			       .multiply(A.modInverse(paillier.getNsquare()))
